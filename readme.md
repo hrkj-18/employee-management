@@ -45,8 +45,10 @@ Edit Profile page of current logged in employee who is not a manager
 
 ### Admin
 email: harsh@gmail.com
+
 password: admin
 
+### Non Admin
 All other users have the same password: qwe
 
 
