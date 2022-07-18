@@ -1,0 +1,80 @@
+{% import "bootstrap/utils.html" as utils %}
+{% extends "base.html" %}
+{% block title %}Employees{% endblock %}
+{% block body %}
+<div class="content-section">
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+        <br/>
+        {{ utils.flashed_messages() }}
+        <br/>
+        <h1 style="text-align:center;">Employees</h1>
+        {% if employees %}
+          <hr class="intro-divider">
+          <div class="center">
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th width="20%"> Name </th>
+                  <th width="20%"> Manager </th>
+                  <th width="20%"> Role </th>
+                  <th width="20%"> Assign </th>
+                  <th width="20%"> Delete </th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for employee in employees %}
+                <tr>
+                  <td> 
+                    <a href="{{ url_for('employee.view_profile', id=employee.id) }}">
+                      {{ employee.first_name }} {{ employee.last_name }} </td>
+                    </a>
+                  <td>
+                    {% if employee.manager_id %}
+                    <a href="{{ url_for('employee.view_profile', id=employee.manager_id) }}">
+                      {{ employee.manager.first_name }}
+                    </a>
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>
+                      {{ employee.role.name }}
+                  </td>
+                  <td>
+                    {% if current_user.id == employee.id %}
+                    -
+                    {% else %}
+                    <a href="{{ url_for('admin.assign_employee', id=employee.id) }}">
+                      <i class="fa fa-user-plus"></i> Assign
+                    </a>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if current_user.id == employee.id %}
+                    -
+                    {% else %}
+                    <a href="{{ url_for('admin.delete_employee', id=employee.id) }}">
+                      <i class="fa fa-trash"></i> Delete
+                    </a>
+                    {% endif %}
+                  </td>
+                </tr>
+                
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div style="text-align: center">
+        {% endif %}
+        <a href="{{ url_for('admin.add_employee') }}" class="btn btn-default btn-lg">
+          <i class="fa fa-plus"></i>
+          Add Employee
+        </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
