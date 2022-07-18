@@ -27,7 +27,7 @@ class CreateEmployeeForm(FlaskForm):
 
 class RoleForm(FlaskForm):
     """
-    Form for admin to add or edit a role
+    Form for admin to add a role
     """
     role_id = IntegerField('Role ID', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
@@ -37,8 +37,17 @@ class RoleForm(FlaskForm):
     def validate_role_id(self, field):
         input_role_id = field.data
         existing_role_id = Role.query.filter_by(role_id=input_role_id).first()
-        if existing_role_id and input_role_id!=current_user.role_id:
+        if existing_role_id:
             raise ValidationError('Role ID is already in use.')
+
+
+class EditRoleForm(FlaskForm):
+    """
+    Form for admin to edit a role
+    """
+    name = StringField('Name', validators=[DataRequired()])
+    description = StringField('Description', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 
 class EmployeeAssignForm(FlaskForm):

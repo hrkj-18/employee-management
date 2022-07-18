@@ -3,7 +3,7 @@ from flask import current_app, flash, render_template, abort, redirect, url_for
 from flask_login import current_user, login_required
 
 from employee_management.models import Employee, Role
-from .forms import CreateEmployeeForm, RoleForm, EmployeeAssignForm
+from .forms import CreateEmployeeForm, RoleForm, EmployeeAssignForm, EditRoleForm
 
 from employee_management import db
 
@@ -13,6 +13,7 @@ def check_admin():
     Prevent non-admins from accessing the page
     """
     if not current_user.is_admin:
+        current_app.logger.warning(f'User: {current_user.first_name} is not an admin')
         abort(403)
 
 
@@ -46,9 +47,12 @@ def add_role():
             db.session.add(role)
             db.session.commit()
             flash('You have successfully added a new role.')
+            current_app.logger.info(f'User: {current_user.first_name} successfully added new role: {role.name}')
         except:
             # in case role name already exists
+            
             flash('Error: role name already exists.')
+            current_app.logger.info(f'role: {role.name} already exists')
 
         # redirect to the roles page
         return redirect(url_for('admin.list_roles'))
@@ -69,18 +73,17 @@ def edit_role(id):
     add_role = False
 
     role = Role.query.get_or_404(id)
-    form = RoleForm(obj=role)
+    form = EditRoleForm(obj=role)
     if form.validate_on_submit():
-        role.role_id = form.role_id.data
         role.name = form.name.data
         role.description = form.description.data
         db.session.add(role)
         db.session.commit()
         flash('You have successfully edited the role.')
+        current_app.logger.info(f'User: {current_user.first_name} successfully edited role: {role.name}')
 
         # redirect to the roles page
         return redirect(url_for('admin.list_roles'))
-    form.role_id.data = role.role_id
     form.description.data = role.description
     form.name.data = role.name
     return render_template('admin/roles/role.html', add_role=add_role,
@@ -99,6 +102,7 @@ def delete_role(id):
     db.session.delete(role)
     db.session.commit()
     flash('You have successfully deleted the role.')
+    current_app.logger.info(f'User: {current_user.first_name} successfully deleted role: {role.name}')
 
     # redirect to the roles page
     return redirect(url_for('admin.list_roles'))
@@ -138,9 +142,11 @@ def add_employee():
             db.session.add(employee)
             db.session.commit()
             flash('You have successfully added a new employee.')
+            current_app.logger.info(f'User: {current_user.first_name} successfully added employee: {employee.first_name}')
         except:
             # in case role name already exists
             flash('Error: employee already exists.')
+            current_app.logger.info(f'Employee: {employee.first_name} already exists')
 
         # redirect to the roles page
         return redirect(url_for('admin.list_employees'))
@@ -171,6 +177,7 @@ def assign_employee(id):
         db.session.add(employee)
         db.session.commit()
         flash('You have successfully assigned a manager and role.')
+        current_app.logger.info(f'User: {current_user.first_name} successfully assigned employee: {employee.first_name} to manager: {employee.manager.first_name} and role: {employee.role_id}')
 
         # redirect to the roles page
         return redirect(url_for('admin.list_employees'))
@@ -195,6 +202,7 @@ def delete_employee(id):
     db.session.delete(employee)
     db.session.commit()
     flash('You have successfully deleted the employee.')
+    current_app.logger.info(f'User: {current_user.first_name} successfully deleted employee: {employee.first_name}')
 
     # redirect to the roles page
     return redirect(url_for('admin.list_employees'))

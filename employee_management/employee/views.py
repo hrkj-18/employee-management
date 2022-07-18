@@ -42,9 +42,11 @@ def edit_details(id):
             # add role to the database
             db.session.add(employee)
             db.session.commit()
+            current_app.logger.debug(f'Details Edited of user: {employee.first_name}')
             flash('You have successfully edited your details.')
         except:
             # in case role name already exists
+            current_app.logger.warning('Employee already exists')
             flash('Error: employee already exists.')
 
         return redirect(url_for('employee.view_profile', id=employee.id))

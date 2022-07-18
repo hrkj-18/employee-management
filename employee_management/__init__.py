@@ -72,5 +72,4 @@ def before_first_request():
     handler = logging.FileHandler(log_file)
     handler.setLevel(log_level)
     app.logger.addHandler(handler)
-    app.logger.debug("This is first DEBUG Message")
     print(log_level)
