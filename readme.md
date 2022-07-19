@@ -50,6 +50,3 @@ password: admin
 
 ### Non Admin
 All other users have the same password: qwe
-
-
-
